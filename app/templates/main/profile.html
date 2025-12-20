@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - MapMyWaste{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-circle text-primary" style="font-size: 5rem;"></i>
+                    <h3 class="mt-3">{{ current_user.name }}</h3>
+                    <p class="text-muted">{{ current_user.email }}</p>
+                    <a href="{{ url_for('main.upload') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Report New Waste
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Statistics</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <div class="p-3">
+                                <i class="bi bi-star-fill text-warning" style="font-size: 2rem;"></i>
+                                <h3 class="mt-2">{{ current_user.points }}</h3>
+                                <p class="text-muted mb-0">Points</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3">
+                                <i class="bi bi-camera-fill text-info" style="font-size: 2rem;"></i>
+                                <h3 class="mt-2">{{ current_user.reports_count }}</h3>
+                                <p class="text-muted mb-0">Reports</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3">
+                                <i class="bi bi-check-circle-fill text-success" style="font-size: 2rem;"></i>
+                                <h3 class="mt-2">{{ current_user.tasks_completed }}</h3>
+                                <p class="text-muted mb-0">Tasks Completed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Badges</h4>
+                </div>
+                <div class="card-body">
+                    {% set badges = current_user.get_badges() %}
+                    {% if badges %}
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for badge in badges %}
+                                <span class="badge bg-warning text-dark p-2" style="font-size: 1rem;">
+                                    <i class="bi bi-trophy-fill"></i> {{ badge }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">No badges yet. Submit your first report to earn badges!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if recent_reports %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">Recent Reports</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Description</th>
+                                    <th>Location</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for report in recent_reports %}
+                                <tr>
+                                    <td>
+                                        <img src="{{ url_for('main.uploaded_file', filename=report.image_filename) }}" 
+                                             alt="Report" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
+                                    </td>
+                                    <td>{{ report.description or 'No description' }}</td>
+                                    <td>
+                                        <small>{{ report.latitude|round(6) }}, {{ report.longitude|round(6) }}</small><br>
+                                        <small class="text-muted">{{ report.location_source }}</small>
+                                    </td>
+                                    <td>{{ report.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('main.my_reports') }}" class="btn btn-outline-primary">View All Reports</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

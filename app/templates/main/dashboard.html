@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - MapMyWaste{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4 pt-2">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm bg-gradient text-white" style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                        <div>
+                            <h2 class="mb-2">Welcome back, {{ current_user.name }}!</h2>
+                            <p class="mb-0">Keep making a difference in your community</p>
+                        </div>
+                        <div class="text-end">
+                            <h3 class="mb-0"><i class="bi bi-star-fill text-warning"></i> {{ current_user.points }}</h3>
+                            <small>Total Points</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-camera-fill text-primary" style="font-size: 2.5rem;"></i>
+                    <h3 class="mt-2 mb-0">{{ current_user.reports_count }}</h3>
+                    <p class="text-muted mb-0">Reports</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-star-fill text-warning" style="font-size: 2.5rem;"></i>
+                    <h3 class="mt-2 mb-0">{{ current_user.points }}</h3>
+                    <p class="text-muted mb-0">Points</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-trophy-fill text-success" style="font-size: 2.5rem;"></i>
+                    <h3 class="mt-2 mb-0">{{ current_user.get_badges()|length }}</h3>
+                    <p class="text-muted mb-0">Badges</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-check-circle-fill text-info" style="font-size: 2.5rem;"></i>
+                    <h3 class="mt-2 mb-0">{{ current_user.tasks_completed }}</h3>
+                    <p class="text-muted mb-0">Tasks</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-lightning-charge-fill text-warning"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <a href="{{ url_for('main.upload') }}" class="btn btn-primary w-100 btn-lg">
+                                <i class="bi bi-plus-circle"></i><br>
+                                Report Waste
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('main.my_reports') }}" class="btn btn-outline-primary w-100 btn-lg">
+                                <i class="bi bi-list-ul"></i><br>
+                                My Reports
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('main.leaderboard') }}" class="btn btn-outline-success w-100 btn-lg">
+                                <i class="bi bi-trophy"></i><br>
+                                Leaderboard
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ url_for('main.profile') }}" class="btn btn-outline-info w-100 btn-lg">
+                                <i class="bi bi-person"></i><br>
+                                Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Badges Section -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-trophy-fill"></i> Your Badges</h5>
+                </div>
+                <div class="card-body">
+                    {% set badges = current_user.get_badges() %}
+                    {% if badges %}
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for badge in badges %}
+                                <span class="badge bg-warning text-dark p-3" style="font-size: 1rem;">
+                                    <i class="bi bi-trophy-fill"></i> {{ badge }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-trophy" style="font-size: 3rem; color: #ccc;"></i>
+                            <p class="text-muted mt-3">No badges yet. Submit your first report to earn badges!</p>
+                            <a href="{{ url_for('main.upload') }}" class="btn btn-primary">Report Waste</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Reports -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Reports</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_reports %}
+                        <div class="list-group list-group-flush">
+                            {% for report in recent_reports %}
+                            <div class="list-group-item border-0 px-0">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ url_for('main.uploaded_file', filename=report.image_filename) }}" 
+                                         class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;" 
+                                         alt="Report">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">{{ report.description[:50] or 'Waste Report' }}{% if report.description|length > 50 %}...{% endif %}</h6>
+                                        <small class="text-muted">
+                                            <i class="bi bi-geo-alt"></i> {{ report.latitude|round(4) }}, {{ report.longitude|round(4) }}
+                                            <span class="ms-2"><i class="bi bi-clock"></i> {{ report.created_at.strftime('%b %d, %Y') }}</span>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="{{ url_for('main.my_reports') }}" class="btn btn-outline-primary">View All Reports</a>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                            <p class="text-muted mt-3">No reports yet. Start reporting waste in your area!</p>
+                            <a href="{{ url_for('main.upload') }}" class="btn btn-primary">Report Waste</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> Your Progress</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <h6>Next Badge: Neighborhood Watcher</h6>
+                            <div class="progress" style="height: 25px;">
+                                {% set progress = (current_user.reports_count / 5 * 100) if current_user.reports_count < 5 else 100 %}
+                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ progress }}%">
+                                    {{ current_user.reports_count }}/5 Reports
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <h6>Next Badge: Waste Warrior</h6>
+                            <div class="progress" style="height: 25px;">
+                                {% set progress = (current_user.reports_count / 20 * 100) if current_user.reports_count < 20 else 100 %}
+                                <div class="progress-bar bg-info" role="progressbar" style="width: {{ progress }}%">
+                                    {{ current_user.reports_count }}/20 Reports
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <h6>Leaderboard Rank</h6>
+                            {% set user_rank = 0 %}
+                            {% for user in all_users %}
+                                {% if user.id == current_user.id %}
+                                    {% set user_rank = loop.index %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if user_rank > 0 %}
+                                <h4 class="text-primary mb-0">#{{ user_rank }}</h4>
+                                <small class="text-muted">Keep it up!</small>
+                            {% else %}
+                                <h4 class="text-primary mb-0">#-</h4>
+                                <small class="text-muted">Not ranked yet</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

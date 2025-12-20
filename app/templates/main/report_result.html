@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+
+{% block title %}Report Submitted Successfully - MapMyWaste{% endblock %}
+
+{% block extra_css %}
+<style>
+    .result-hero {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+        color: white;
+        padding: 3rem 0;
+        margin-top: 0;
+    }
+    .success-icon {
+        font-size: 5rem;
+        color: #28a745;
+    }
+    .result-card {
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+    .result-card:hover {
+        transform: translateY(-5px);
+    }
+    .badge-earned {
+        animation: bounce 0.5s;
+    }
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    @keyframes scaleIn {
+        0% { transform: scale(0); opacity: 0; }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    .result-hero {
+        animation: fadeIn 0.8s ease-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Success Hero Section -->
+<div class="result-hero text-center">
+    <div class="container">
+        <div class="mb-4">
+            <i class="bi bi-check-circle-fill success-icon" style="animation: scaleIn 0.5s ease-out;"></i>
+        </div>
+        <h1 class="display-4 fw-bold mt-3">Thank You for Your Contribution!</h1>
+        <p class="lead fs-4 mt-3">Your waste report has been successfully submitted and recorded.</p>
+        <p class="lead">Your efforts help us create a cleaner and healthier environment for everyone.</p>
+    </div>
+</div>
+
+<div class="container mt-5 mb-5">
+    <!-- Acknowledgement Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 text-center" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white;">
+                <div class="card-body p-4">
+                    <i class="bi bi-check-circle-fill" style="font-size: 3rem;"></i>
+                    <h4 class="mt-3 mb-2">Report Received</h4>
+                    <p class="mb-0">Your waste report has been successfully recorded in our system.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 text-center" style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%); color: white;">
+                <div class="card-body p-4">
+                    <i class="bi bi-geo-alt-fill" style="font-size: 3rem;"></i>
+                    <h4 class="mt-3 mb-2">Location Mapped</h4>
+                    <p class="mb-0">GPS coordinates have been captured and added to our database.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 text-center" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: white;">
+                <div class="card-body p-4">
+                    <i class="bi bi-diagram-3-fill" style="font-size: 3rem;"></i>
+                    <h4 class="mt-3 mb-2">Route Optimization</h4>
+                    <p class="mb-0">Your report will be used to optimize waste collection routes.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Message with Points -->
+    <div class="alert alert-success border-0 shadow-sm" role="alert" style="border-left: 5px solid #28a745 !important;">
+        <div class="d-flex align-items-center">
+            <div class="me-3">
+                <i class="bi bi-trophy-fill" style="font-size: 3rem; color: #ffc107;"></i>
+            </div>
+            <div class="flex-grow-1">
+                <h4 class="alert-heading mb-2"><i class="bi bi-star-fill"></i> Congratulations! You Earned Points!</h4>
+                <p class="mb-2 fs-5">You have earned <strong class="text-primary">+10 points</strong> for submitting this waste report.</p>
+                <p class="mb-0"><strong>Total Points:</strong> <span class="badge bg-primary" style="font-size: 1.1rem;">{{ current_user.points }} points</span></p>
+                {% if badges|length > 0 %}
+                <hr class="my-3">
+                <p class="mb-2"><strong>🎉 New Badges Earned:</strong></p>
+                <div class="mt-2">
+                    {% for badge in badges %}
+                    <span class="badge bg-warning text-dark badge-earned me-2 mb-2" style="font-size: 1.1rem; padding: 0.6rem 1.2rem;">
+                        <i class="bi bi-trophy-fill"></i> {{ badge }}
+                    </span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- What Happens Next -->
+    <div class="card border-0 shadow-sm mb-4" style="border-left: 5px solid #0d6efd !important;">
+        <div class="card-body p-4">
+            <h5 class="card-title mb-3"><i class="bi bi-info-circle-fill text-primary"></i> What Happens Next?</h5>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <strong>1</strong>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6>Report Processing</h6>
+                            <p class="text-muted mb-0">Your report is being processed and added to our waste management system.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <strong>2</strong>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6>Clustering Analysis</h6>
+                            <p class="text-muted mb-0">The location will be analyzed using AI clustering to optimize collection routes.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-shrink-0">
+                            <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <strong>3</strong>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6>Route Planning</h6>
+                            <p class="text-muted mb-0">Authorities will use this data to plan efficient waste collection routes.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <strong>4</strong>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6>Collection Action</h6>
+                            <p class="text-muted mb-0">Waste collection teams will be dispatched based on optimized routes.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Report Details Card -->
+        <div class="col-lg-8">
+            <div class="card result-card border-0 shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-info-circle"></i> Report Details</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <img src="{{ url_for('main.uploaded_file', filename=report.image_filename) }}" 
+                                 class="img-fluid rounded shadow" 
+                                 alt="Waste Report Image"
+                                 style="max-height: 400px; width: 100%; object-fit: cover;">
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Report Information</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong><i class="bi bi-calendar"></i> Submitted:</strong></td>
+                                    <td>{{ report.created_at.strftime('%B %d, %Y at %I:%M %p') }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong><i class="bi bi-geo-alt"></i> Location:</strong></td>
+                                    <td>
+                                        {{ report.latitude|round(6) }}, {{ report.longitude|round(6) }}<br>
+                                        <small class="text-muted">{{ sample_address }}</small>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong><i class="bi bi-tag"></i> Source:</strong></td>
+                                    <td>
+                                        <span class="badge bg-info">{{ report.location_source }}</span>
+                                    </td>
+                                </tr>
+                                {% if report.cluster_id is not none %}
+                                <tr>
+                                    <td><strong><i class="bi bi-diagram-3"></i> Cluster:</strong></td>
+                                    <td>
+                                        <span class="badge bg-success">Cluster {{ report.cluster_id }}</span>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                <tr>
+                                    <td><strong><i class="bi bi-file-text"></i> Description:</strong></td>
+                                    <td>{{ report.description or 'No description provided' }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats & Actions Card -->
+        <div class="col-lg-4">
+            <div class="card result-card border-0 shadow-lg mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> Your Stats</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <h2 class="text-primary mb-0">{{ current_user.points }}</h2>
+                        <p class="text-muted mb-0">Total Points</p>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span><i class="bi bi-camera-fill text-primary"></i> Reports:</span>
+                        <strong>{{ current_user.reports_count }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span><i class="bi bi-trophy-fill text-warning"></i> Badges:</span>
+                        <strong>{{ current_user.get_badges()|length }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span><i class="bi bi-check-circle-fill text-success"></i> Tasks:</span>
+                        <strong>{{ current_user.tasks_completed }}</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card result-card border-0 shadow-lg">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-lightning-charge"></i> Next Steps</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">Continue making a difference in your community!</p>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('main.upload') }}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-plus-circle"></i> Report Another Waste
+                        </a>
+                        <a href="{{ url_for('main.my_reports') }}" class="btn btn-outline-primary">
+                            <i class="bi bi-list-ul"></i> View All My Reports
+                        </a>
+                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-success">
+                            <i class="bi bi-speedometer2"></i> Go to Dashboard
+                        </a>
+                        <a href="{{ url_for('main.leaderboard') }}" class="btn btn-outline-warning">
+                            <i class="bi bi-trophy"></i> View Leaderboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Thank You Message -->
+            <div class="card border-0 shadow-sm mt-4" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-heart-fill text-danger" style="font-size: 2rem;"></i>
+                    <h5 class="mt-2 mb-2">Thank You for Your Contribution!</h5>
+                    <p class="text-muted mb-0">Every report helps create a cleaner, healthier environment for our community.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Preview -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card result-card border-0 shadow-lg">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-map"></i> Your Report Location on Map</h5>
+                    <small class="text-white-50">The exact location where you reported the waste</small>
+                </div>
+                <div class="card-body p-0">
+                    <div id="result-map" style="height: 450px; width: 100%; border-radius: 0 0 15px 15px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Acknowledgement -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="alert alert-primary border-0 shadow-sm text-center" role="alert" style="background: linear-gradient(135deg, #e7f1ff 0%, #cfe2ff 100%);">
+                <h5 class="alert-heading mb-3">
+                    <i class="bi bi-check-circle-fill text-success"></i> Report Successfully Acknowledged
+                </h5>
+                <p class="mb-2 fs-5">Your waste report ID: <strong>#{{ report.id }}</strong></p>
+                <p class="mb-0">We appreciate your effort in helping us maintain a clean environment. Your report has been logged and will be processed by our waste management team.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script>
+    // Initialize map
+    const map = L.map('result-map').setView([{{ report.latitude }}, {{ report.longitude }}], 15);
+    
+    // Add tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    // Add marker for the report location
+    const marker = L.marker([{{ report.latitude }}, {{ report.longitude }}]).addTo(map);
+    marker.bindPopup(`
+        <strong>Waste Report Location</strong><br>
+        {{ sample_address }}<br>
+        <small>Submitted: {{ report.created_at.strftime('%B %d, %Y') }}</small>
+    `).openPopup();
+</script>
+{% endblock %}
+

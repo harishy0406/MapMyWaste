@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Report Waste - MapMyWaste{% endblock %}
+
+{% block extra_css %}
+<style>
+    #map-preview {
+        height: 300px;
+        width: 100%;
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="bi bi-camera-fill"></i> Report Waste</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('main.upload') }}" enctype="multipart/form-data" id="upload-form">
+                        <div class="mb-4">
+                            <label for="image" class="form-label">Upload Image</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                            <small class="form-text text-muted">Supported formats: PNG, JPG, JPEG, GIF, WEBP (max 16MB)</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description (Optional)</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Describe the waste location or type..."></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Location</label>
+                            <div class="d-flex gap-2 mb-2">
+                                <button type="button" class="btn btn-outline-primary" id="get-location-btn">
+                                    <i class="bi bi-geo-alt-fill"></i> Use My Current Location
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="manual-location-btn">
+                                    <i class="bi bi-pencil"></i> Enter Manually
+                                </button>
+                            </div>
+                            <div id="location-inputs" class="d-none">
+                                <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <input type="number" step="any" class="form-control" id="latitude" name="latitude" placeholder="Latitude" required>
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <input type="number" step="any" class="form-control" id="longitude" name="longitude" placeholder="Longitude" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="location-status" class="text-muted small mt-2"></div>
+                        </div>
+                        
+                        <div id="map-preview-container" class="mb-3 d-none">
+                            <div id="map-preview"></div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-upload"></i> Submit Report
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const getLocationBtn = document.getElementById('get-location-btn');
+    const manualLocationBtn = document.getElementById('manual-location-btn');
+    const locationInputs = document.getElementById('location-inputs');
+    const locationStatus = document.getElementById('location-status');
+    const latInput = document.getElementById('latitude');
+    const lonInput = document.getElementById('longitude');
+    const mapPreviewContainer = document.getElementById('map-preview-container');
+    let map = null;
+    let marker = null;
+
+    getLocationBtn.addEventListener('click', () => {
+        locationStatus.textContent = 'Getting your location...';
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    latInput.value = lat;
+                    lonInput.value = lon;
+                    locationInputs.classList.remove('d-none');
+                    locationStatus.textContent = `Location found: ${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+                    updateMapPreview(lat, lon);
+                },
+                (error) => {
+                    locationStatus.textContent = 'Unable to get location. Please enter manually.';
+                    locationInputs.classList.remove('d-none');
+                }
+            );
+        } else {
+            locationStatus.textContent = 'Geolocation not supported. Please enter manually.';
+            locationInputs.classList.remove('d-none');
+        }
+    });
+
+    manualLocationBtn.addEventListener('click', () => {
+        locationInputs.classList.remove('d-none');
+        locationStatus.textContent = 'Enter coordinates manually';
+    });
+
+    function updateMapPreview(lat, lon) {
+        if (!map) {
+            map = L.map('map-preview').setView([lat, lon], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+        } else {
+            map.setView([lat, lon], 13);
+        }
+        
+        if (marker) {
+            map.removeLayer(marker);
+        }
+        marker = L.marker([lat, lon]).addTo(map);
+        mapPreviewContainer.classList.remove('d-none');
+    }
+
+    latInput.addEventListener('input', () => {
+        if (latInput.value && lonInput.value) {
+            updateMapPreview(parseFloat(latInput.value), parseFloat(lonInput.value));
+        }
+    });
+
+    lonInput.addEventListener('input', () => {
+        if (latInput.value && lonInput.value) {
+            updateMapPreview(parseFloat(latInput.value), parseFloat(lonInput.value));
+        }
+    });
+</script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+

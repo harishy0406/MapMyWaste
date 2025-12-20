@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Map - MapMyWaste{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    #admin-map {
+        height: 600px;
+        width: 100%;
+        border-radius: 8px;
+    }
+    .cluster-legend {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        z-index: 1000;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Waste Reports Map</h2>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+    
+    <div class="card border-0 shadow-lg">
+        <div class="card-body p-4">
+            <div id="admin-map"></div>
+            <div class="cluster-legend">
+                <h6 class="mb-2">Legend</h6>
+                <div><i class="bi bi-circle-fill text-primary"></i> Waste Reports</div>
+                <div><i class="bi bi-geo-alt-fill text-danger" style="font-size: 1.2rem;"></i> Cluster Centroids</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // Initialize map
+    const map = L.map('admin-map').setView([40.7128, -74.0060], 10);
+    
+    // Add tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    // Color palette for clusters
+    const clusterColors = [
+        '#FF5733', '#33FF57', '#3357FF', '#FF33F5', '#F5FF33',
+        '#33FFF5', '#FF3333', '#33FF33', '#3333FF', '#FF33FF'
+    ];
+    
+    // Reports data from template - convert to JSON-serializable format
+    const reportsData = [
+        {% for report in reports %}
+        {
+            id: {{ report.id }},
+            latitude: {{ report.latitude }},
+            longitude: {{ report.longitude }},
+            cluster_id: {{ report.cluster_id if report.cluster_id is not none else 'null' }},
+            description: {{ (report.description or '') | tojson }},
+            image_filename: {{ report.image_filename | tojson }},
+            user_name: {{ report.user.name | tojson }},
+            created_at: {{ report.created_at.isoformat() | tojson }},
+            location_source: {{ report.location_source | tojson }}
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+    const centroids = {{ centroids | tojson }};
+    const depotLat = {{ depot_lat }};
+    const depotLon = {{ depot_lon }};
+    
+    // Add report markers
+    const reportMarkers = {};
+    reportsData.forEach(report => {
+        const color = report.cluster_id !== null && report.cluster_id < clusterColors.length 
+            ? clusterColors[report.cluster_id] 
+            : '#666';
+        
+        const marker = L.circleMarker([report.latitude, report.longitude], {
+            radius: 6,
+            fillColor: color,
+            color: '#fff',
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.8
+        }).addTo(map);
+        
+        const popupContent = `
+            <div style="max-width: 250px;">
+                <img src="/uploads/${report.image_filename}" 
+                     style="width: 100%; height: 150px; object-fit: cover; border-radius: 4px; margin-bottom: 8px;">
+                <strong>User:</strong> ${report.user_name}<br>
+                <strong>Description:</strong> ${report.description || 'No description'}<br>
+                <strong>Cluster:</strong> ${report.cluster_id !== null ? report.cluster_id : 'Not clustered'}<br>
+                <strong>Date:</strong> ${new Date(report.created_at).toLocaleString()}<br>
+                <strong>Source:</strong> ${report.location_source}
+            </div>
+        `;
+        marker.bindPopup(popupContent);
+        
+        if (!reportMarkers[report.cluster_id]) {
+            reportMarkers[report.cluster_id] = [];
+        }
+        reportMarkers[report.cluster_id].push(marker);
+    });
+    
+    // Add centroid markers
+    centroids.forEach(centroid => {
+        const icon = L.divIcon({
+            className: 'centroid-icon',
+            html: `<i class="bi bi-geo-alt-fill" style="color: red; font-size: 24px;"></i>`,
+            iconSize: [24, 24],
+            iconAnchor: [12, 24]
+        });
+        
+        const marker = L.marker([centroid.latitude, centroid.longitude], { icon: icon }).addTo(map);
+        
+        const routeUrl = `https://www.google.com/maps/dir/${depotLat},${depotLon}/${centroid.latitude},${centroid.longitude}`;
+        
+        const popupContent = `
+            <div>
+                <strong>Cluster ${centroid.cluster_id}</strong><br>
+                <strong>Reports:</strong> ${centroid.count}<br>
+                <strong>Location:</strong> ${centroid.latitude.toFixed(6)}, ${centroid.longitude.toFixed(6)}<br>
+                <a href="${routeUrl}" target="_blank" class="btn btn-sm btn-primary mt-2">
+                    <i class="bi bi-map"></i> Get Route from Depot
+                </a>
+            </div>
+        `;
+        marker.bindPopup(popupContent);
+    });
+    
+    // Fit map to show all markers
+    if (reportsData.length > 0) {
+        const group = new L.featureGroup(Object.values(reportMarkers).flat());
+        map.fitBounds(group.getBounds().pad(0.1));
+    }
+</script>
+{% endblock %}
+
