@@ -1,0 +1,4 @@
+Problem Statement
+Existing municipal waste‑collection systems struggle with:
+Unstructured reporting: Citizen complaints arrive via calls or messages with vague or missing location details, making it difficult to identify exact dumping points.
+
