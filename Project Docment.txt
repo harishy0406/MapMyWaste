@@ -8,3 +8,5 @@ There is a need for a system that captures precise location data from field evid
 
 Proposed Solution (MapMyWaste)
 MapMyWaste is proposed as an AI‑assisted, citizen‑driven waste‑tracking platform with three core capabilities:
+Geo‑tagged Waste Reporting
+Users access a responsive web application, upload or capture photos of waste locations, and optionally add descriptions. The system extracts latitude and longitude from the image’s EXIF metadata or, if unavailable, uses browser geolocation or a map picker. Each report is stored in a central database along with user identity, timestamp and location source.
