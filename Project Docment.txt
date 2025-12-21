@@ -2,5 +2,5 @@ Problem Statement
 Existing municipal waste‑collection systems struggle with:
 Unstructured reporting: Citizen complaints arrive via calls or messages with vague or missing location details, making it difficult to identify exact dumping points.
 Inefficient routing: Trucks often follow static or manually designed routes that ignore real‑time hotspots, leading to increased travel distance, higher fuel consumption and delayed clearance of critical areas.
-
+Lack of engagement and feedback: Citizens rarely see the impact of their reports, and there is no mechanism to incentivize continuous participation in monitoring neighborhood cleanliness.
 
