@@ -14,3 +14,5 @@ Users access a responsive web application, upload or capture photos of waste loc
 K‑Means–Based Spatial Clustering and Route Support
 Periodically, the backend runs K‑means clustering on all collected coordinates to group nearby waste spots into service zones. The resulting centroids represent optimal collection points within each cluster. These centroids, along with individual reports, are visualized on an interactive map for authorities, and simple route URLs (e.g., via Google Maps) from depot to centroids are generated to support route planning and fuel‑efficient scheduling.
 
+Gamified User and Authority Dashboards
+A user dashboard shows personal statistics (reports submitted, points, tasks completed, badges earned) and encourages continued participation through achievements and a city‑wide leaderboard. An authority dashboard presents summary metrics, cluster densities, and map visualizations, enabling quick identification of hotspots and prioritization of cleaning operations.
