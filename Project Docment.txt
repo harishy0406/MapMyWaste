@@ -5,3 +5,6 @@ Inefficient routing: Trucks often follow static or manually designed routes that
 Lack of engagement and feedback: Citizens rarely see the impact of their reports, and there is no mechanism to incentivize continuous participation in monitoring neighborhood cleanliness.
 
 There is a need for a system that captures precise location data from field evidence, aggregates reports intelligently, and converts them into optimized collection plans while keeping citizens engaged.
+
+Proposed Solution (MapMyWaste)
+MapMyWaste is proposed as an AI‑assisted, citizen‑driven waste‑tracking platform with three core capabilities:
