@@ -10,3 +10,7 @@ Proposed Solution (MapMyWaste)
 MapMyWaste is proposed as an AI‑assisted, citizen‑driven waste‑tracking platform with three core capabilities:
 Geo‑tagged Waste Reporting
 Users access a responsive web application, upload or capture photos of waste locations, and optionally add descriptions. The system extracts latitude and longitude from the image’s EXIF metadata or, if unavailable, uses browser geolocation or a map picker. Each report is stored in a central database along with user identity, timestamp and location source.
+
+K‑Means–Based Spatial Clustering and Route Support
+Periodically, the backend runs K‑means clustering on all collected coordinates to group nearby waste spots into service zones. The resulting centroids represent optimal collection points within each cluster. These centroids, along with individual reports, are visualized on an interactive map for authorities, and simple route URLs (e.g., via Google Maps) from depot to centroids are generated to support route planning and fuel‑efficient scheduling.
+
