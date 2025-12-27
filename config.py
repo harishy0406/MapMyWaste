@@ -25,6 +25,6 @@ class Config:
     BADGE_WASTE_WARRIOR = 20
     
     # Admin depot location for route links
-    DEPOT_LAT = 40.7128  # Default NYC coordinates - change as needed
-    DEPOT_LON = -74.0060
+    DEPOT_LAT = 13.0827  # Chennai depot coordinates
+    DEPOT_LON = 80.2707
 

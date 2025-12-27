@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, flash, jsonify, abort, req
 from flask_login import login_required, current_user
 from functools import wraps
 from app.admin import bp
-from app.models import User, WasteReport
+from app.models import User, WasteReport, Driver, Truck, Route, Assignment
 from app import db
 from app.services.clustering import run_clustering
 from config import Config
@@ -102,11 +102,13 @@ def map():
 @admin_required
 def clear_reports():
     try:
-        # Delete all Waste Reports
-        report_count = WasteReport.query.count()
-        WasteReport.query.delete()
+        # Count before deletion
+        initial_report_count = WasteReport.query.count()
+        initial_user_count = User.query.count()
 
-        # Delete all non-admin users and reset admin stats
+        print(f"Initial counts - Reports: {initial_report_count}, Users: {initial_user_count}")
+
+        # First, delete all non-admin users (this will cascade delete their reports due to relationship)
         user_count = 0
         for user in User.query.all():
             if user.role != 'admin':
@@ -119,7 +121,13 @@ def clear_reports():
                 user.tasks_completed = 0
                 user.badges = '[]'
 
-        # Ensure admin user exists
+        # Delete any remaining reports (in case some reports don't have users or other edge cases)
+        WasteReport.query.delete()
+
+        # Commit the deletions and updates
+        db.session.commit()
+
+        # Ensure admin user exists (after commit, in case admin was deleted)
         admin = User.query.filter_by(email='admin@mapmywaste.com').first()
         if not admin:
             admin = User(
@@ -135,12 +143,67 @@ def clear_reports():
             db.session.add(admin)
             db.session.commit()
 
-        flash(f'Database reset complete! Deleted {report_count} reports and {user_count} users. Admin user recreated.', 'success')
-        print(f"Cleared {report_count} reports and deleted {user_count} users")  # Debug
+        # Calculate deleted counts
+        deleted_reports = initial_report_count
+        deleted_users = user_count
+
+        # Verify the deletions worked
+        final_reports = WasteReport.query.count()
+        final_users = User.query.count()
+
+        flash(f'Database reset complete! Deleted {deleted_reports} reports and {deleted_users} users. Admin user recreated. Final counts: {final_reports} reports, {final_users} users.', 'success')
+        print(f"Cleared {deleted_reports} reports and deleted {deleted_users} users. Final counts: {final_reports} reports, {final_users} users")  # Debug
     except Exception as e:
         db.session.rollback()
         flash(f'Error clearing database: {str(e)}', 'error')
         print(f"Error clearing database: {str(e)}")  # Debug
+
+    return redirect(url_for('admin.dashboard'))
+
+@bp.route('/clear-recent-reports', methods=['POST'])
+@login_required
+@admin_required
+def clear_recent_reports():
+    """Clear reports from the last 24 hours"""
+    try:
+        from datetime import datetime, timedelta
+
+        # Calculate cutoff time (24 hours ago)
+        cutoff_time = datetime.utcnow() - timedelta(hours=24)
+
+        # Find recent reports
+        recent_reports = WasteReport.query.filter(WasteReport.created_at >= cutoff_time).all()
+        report_count = len(recent_reports)
+
+        if report_count == 0:
+            flash('No reports found from the last 24 hours.', 'info')
+            return redirect(url_for('admin.dashboard'))
+
+        # Delete recent reports
+        for report in recent_reports:
+            db.session.delete(report)
+
+        # Update user stats for affected users
+        affected_user_ids = set(report.user_id for report in recent_reports)
+        for user_id in affected_user_ids:
+            user = User.query.get(user_id)
+            if user:
+                # Recalculate user's stats
+                user.reports_count = WasteReport.query.filter_by(user_id=user.id).count()
+                user.points = user.reports_count * 10  # Recalculate points
+                # You might want to recalculate badges too
+                from app.services.gamification import update_user_achievements
+                update_user_achievements(user)
+
+        db.session.commit()
+
+        flash(f'Cleared {report_count} reports from the last 24 hours. User stats updated.', 'success')
+        print(f"Cleared {report_count} recent reports")  # Debug
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error clearing recent reports: {str(e)}', 'error')
+        print(f"Error clearing recent reports: {str(e)}")  # Debug
 
     return redirect(url_for('admin.dashboard'))
 
@@ -169,6 +232,121 @@ def seed_data():
 
     return redirect(url_for('admin.dashboard'))
 
+
+@bp.route('/seed-fleet-data', methods=['POST'])
+@login_required
+@admin_required
+def seed_fleet_data():
+    """Generate sample fleet data (trucks, drivers, routes)"""
+    try:
+        from datetime import datetime, time
+
+        # Sample drivers
+        drivers_data = [
+            {'name': 'Raj Kumar', 'license_number': 'TN123456789', 'phone': '+91 98765 43210', 'email': 'raj.driver@mapmywaste.com'},
+            {'name': 'Suresh Babu', 'license_number': 'TN987654321', 'phone': '+91 98765 43211', 'email': 'suresh.driver@mapmywaste.com'},
+            {'name': 'Mohan Raj', 'license_number': 'TN456789123', 'phone': '+91 98765 43212', 'email': 'mohan.driver@mapmywaste.com'},
+            {'name': 'Karthik Nair', 'license_number': 'TN789123456', 'phone': '+91 98765 43213', 'email': 'karthik.driver@mapmywaste.com'},
+        ]
+
+        drivers_created = 0
+        for driver_data in drivers_data:
+            if not Driver.query.filter_by(license_number=driver_data['license_number']).first():
+                driver = Driver(**driver_data)
+                db.session.add(driver)
+                drivers_created += 1
+
+        # Sample trucks
+        trucks_data = [
+            {'truck_number': 'TN01-AA-1234', 'capacity': 8.0, 'truck_type': 'Garbage Compactor', 'driver_id': 1},
+            {'truck_number': 'TN01-BB-5678', 'capacity': 6.0, 'truck_type': 'Dump Truck', 'driver_id': 2},
+            {'truck_number': 'TN01-CC-9012', 'capacity': 10.0, 'truck_type': 'Garbage Compactor', 'driver_id': 3},
+            {'truck_number': 'TN01-DD-3456', 'capacity': 7.0, 'truck_type': 'Dump Truck', 'driver_id': 4},
+        ]
+
+        trucks_created = 0
+        for truck_data in trucks_data:
+            if not Truck.query.filter_by(truck_number=truck_data['truck_number']).first():
+                truck = Truck(**truck_data)
+                db.session.add(truck)
+                trucks_created += 1
+
+        # Sample routes (around Tamil Nadu locations)
+        routes_data = [
+            {
+                'route_name': 'Chennai Central Route',
+                'description': 'Central Chennai residential areas',
+                'estimated_duration': 180,  # 3 hours
+                'distance_km': 45.0,
+                'stops': '[[13.0827,80.2707],[13.0475,80.1960],[13.0060,80.2580]]'
+            },
+            {
+                'route_name': 'Adyar-T. Nagar Route',
+                'description': 'South Chennai upscale areas',
+                'estimated_duration': 150,  # 2.5 hours
+                'distance_km': 32.0,
+                'stops': '[[13.0060,80.2580],[12.9200,80.0800],[12.9800,80.1500]]'
+            },
+            {
+                'route_name': 'Coimbatore Route',
+                'description': 'Coimbatore city center',
+                'estimated_duration': 120,  # 2 hours
+                'distance_km': 28.0,
+                'stops': '[[11.0168,76.9558],[10.7905,78.7047],[10.7905,78.7047]]'
+            },
+            {
+                'route_name': 'Madurai Route',
+                'description': 'Madurai residential and commercial',
+                'estimated_duration': 140,  # 2.3 hours
+                'distance_km': 35.0,
+                'stops': '[[9.9252,78.1198],[8.1762,77.4415],[8.7139,77.7567]]'
+            }
+        ]
+
+        routes_created = 0
+        for route_data in routes_data:
+            if not Route.query.filter_by(route_name=route_data['route_name']).first():
+                route = Route(**route_data)
+                db.session.add(route)
+                routes_created += 1
+
+        # Sample assignments for today
+        from datetime import date
+        today = date.today()
+
+        assignments_data = [
+            {'truck_id': 1, 'driver_id': 1, 'route_id': 1, 'assignment_date': today, 'start_time': time(8, 0)},
+            {'truck_id': 2, 'driver_id': 2, 'route_id': 2, 'assignment_date': today, 'start_time': time(9, 30)},
+            {'truck_id': 3, 'driver_id': 3, 'route_id': 3, 'assignment_date': today, 'start_time': time(10, 0)},
+        ]
+
+        assignments_created = 0
+        for assignment_data in assignments_data:
+            # Check if assignment already exists for today
+            existing = Assignment.query.filter_by(
+                truck_id=assignment_data['truck_id'],
+                assignment_date=assignment_data['assignment_date']
+            ).first()
+            if not existing:
+                assignment = Assignment(**assignment_data)
+                db.session.add(assignment)
+                assignments_created += 1
+
+        db.session.commit()
+
+        flash(f'Fleet data created: {drivers_created} drivers, {trucks_created} trucks, {routes_created} routes, {assignments_created} assignments', 'success')
+        print(f"Fleet data: {drivers_created} drivers, {trucks_created} trucks, {routes_created} routes, {assignments_created} assignments")
+
+    except Exception as e:
+        db.session.rollback()
+        import traceback
+        error_details = traceback.format_exc()
+        flash(f'Error creating fleet data: {str(e)}', 'error')
+        print(f"Fleet data error: {str(e)}")
+        print(f"Error details: {error_details}")
+
+    return redirect(url_for('admin.truck_assignments'))
+
 @bp.route('/debug')
 @login_required
 @admin_required
@@ -185,6 +363,56 @@ def debug():
     }
 
     return jsonify(debug_info)
+
+@bp.route('/truck-assignments')
+@login_required
+@admin_required
+def truck_assignments():
+    """Truck assignment management page"""
+    # Get all trucks with their current assignments
+    trucks = Truck.query.all()
+    drivers = Driver.query.all()
+    routes = Route.query.all()
+
+    # Get today's assignments
+    from datetime import date
+    today = date.today()
+    today_assignments = Assignment.query.filter_by(assignment_date=today).all()
+
+    # Get all waste reports for the map
+    reports = WasteReport.query.filter(
+        WasteReport.latitude.isnot(None),
+        WasteReport.longitude.isnot(None)
+    ).all()
+
+    # Calculate centroids for clusters
+    centroids = []
+    if reports:
+        cluster_groups = defaultdict(list)
+        for report in reports:
+            if report.cluster_id is not None:
+                cluster_groups[report.cluster_id].append(report)
+
+        for cluster_id, cluster_reports in cluster_groups.items():
+            avg_lat = sum(r.latitude for r in cluster_reports) / len(cluster_reports)
+            avg_lon = sum(r.longitude for r in cluster_reports) / len(cluster_reports)
+            centroids.append({
+                'cluster_id': cluster_id,
+                'latitude': avg_lat,
+                'longitude': avg_lon,
+                'count': len(cluster_reports)
+            })
+
+    return render_template('admin/truck_assignments.html',
+                         trucks=trucks,
+                         drivers=drivers,
+                         routes=routes,
+                         today_assignments=today_assignments,
+                         reports=reports,
+                         centroids=centroids,
+                         depot_lat=Config.DEPOT_LAT,
+                         depot_lon=Config.DEPOT_LON)
+
 
 @bp.route('/api/reports')
 @login_required
