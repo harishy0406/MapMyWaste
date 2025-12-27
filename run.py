@@ -1,5 +1,5 @@
 from app import create_app, db
-from app.models import User
+from app.models import User, Driver, Truck, Route, Assignment
 
 app = create_app()
 
