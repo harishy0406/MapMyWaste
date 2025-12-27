@@ -1,33 +1,188 @@
 {% extends "base.html" %}
 
-{% block title %}Contact - MapMyWaste{% endblock %}
+{% block title %}Contact Us - MapMyWaste{% endblock %}
+
+{% block extra_css %}
+<style>
+    .contact-section {
+        padding: 3rem 0;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .contact-image {
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        height: 100%;
+        min-height: 400px;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .contact-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .contact-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+
+    .contact-image:hover img {
+        transform: scale(1.05);
+    }
+
+    .contact-form-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        height: 100%;
+    }
+
+    .contact-form-card h3 {
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        transform: translateY(-2px);
+        transition: all 0.3s ease;
+    }
+
+    .btn-send {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .btn-send:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .contact-info {
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .contact-info-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .contact-info-item i {
+        color: #667eea;
+        margin-right: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .contact-info-item p {
+        margin: 0;
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container mt-5 pt-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <h2 class="text-center mb-4">Contact Us</h2>
-            <div class="card border-0 shadow-lg">
-                <div class="card-body p-5">
+<div class="contact-section">
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-12 text-center">
+                <h2 class="display-5 fw-bold text-dark mb-3">Get In Touch</h2>
+                <p class="lead text-muted">Have questions? We'd love to hear from you.</p>
+            </div>
+        </div>
+
+        <div class="row g-4 align-items-stretch">
+            <!-- Contact Image -->
+            <div class="col-lg-6 col-md-6 mb-4 mb-lg-0">
+                <div class="contact-image">
+                    <img src="/images/contact.jpeg" alt="Contact Us" class="w-100 h-100" style="object-fit: cover;" onerror="this.src='https://via.placeholder.com/600x400/667eea/white?text=Contact+Us'">
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="col-lg-6 col-md-6">
+                <div class="contact-form-card">
+                    <h3 class="text-center">Send us a Message</h3>
+
                     <form method="POST" action="{{ url_for('main.contact') }}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label fw-semibold">
+                                    <i class="bi bi-person-fill text-primary me-2"></i>Full Name
+                                </label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Your name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label fw-semibold">
+                                    <i class="bi bi-envelope-fill text-primary me-2"></i>Email
+                                </label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="your@email.com" required>
+                            </div>
+                        </div>
+
                         <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
+                            <label for="subject" class="form-label fw-semibold">
+                                <i class="bi bi-tag-fill text-primary me-2"></i>Subject
+                            </label>
+                            <input type="text" class="form-control" id="subject" name="subject" placeholder="What's this about?" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
+
+                        <div class="mb-4">
+                            <label for="message" class="form-label fw-semibold">
+                                <i class="bi bi-chat-text-fill text-primary me-2"></i>Message
+                            </label>
+                            <textarea class="form-control" id="message" name="message" rows="4" placeholder="Tell us how we can help..." required></textarea>
                         </div>
-                        <div class="mb-3">
-                            <label for="message" class="form-label">Message</label>
-                            <textarea class="form-control" id="message" name="message" rows="6" required></textarea>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-send"></i> Send Message
-                            </button>
-                        </div>
+
+                        <button type="submit" class="btn btn-send">
+                            <i class="bi bi-send-fill me-2"></i>Send Message
+                        </button>
                     </form>
+
+                    <!-- Contact Info -->
+                    <div class="contact-info">
+                        <div class="contact-info-item">
+                            <i class="bi bi-envelope-fill"></i>
+                            <div>
+                                <strong>Email</strong><br>
+                                <p>support@mapmywaste.com</p>
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="bi bi-telephone-fill"></i>
+                            <div>
+                                <strong>Phone</strong><br>
+                                <p>+91 98765 43210</p>
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            <div>
+                                <strong>Location</strong><br>
+                                <p>Chennai, Tamil Nadu, India</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

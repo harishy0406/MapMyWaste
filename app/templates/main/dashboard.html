@@ -7,7 +7,7 @@
     <!-- Welcome Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card border-0 shadow-sm bg-gradient text-white" style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);">
+            <div class="card border-0 shadow-sm bg-gradient text-dark" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center flex-wrap">
                         <div>
@@ -15,7 +15,7 @@
                             <p class="mb-0">Keep making a difference in your community</p>
                         </div>
                         <div class="text-end">
-                            <h3 class="mb-0"><i class="bi bi-star-fill text-warning"></i> {{ current_user.points }}</h3>
+                            <h3 class="mb-0"><i class="bi bi-star-fill text-primary"></i> {{ current_user.points }}</h3>
                             <small>Total Points</small>
                         </div>
                     </div>
@@ -184,8 +184,7 @@
                         <div class="col-md-4 mb-3">
                             <h6>Next Badge: Neighborhood Watcher</h6>
                             <div class="progress" style="height: 25px;">
-                                {% set progress = (current_user.reports_count / 5 * 100) if current_user.reports_count < 5 else 100 %}
-                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ progress }}%">
+                                <div class="progress-bar bg-success" role="progressbar" style="--progress-width: {{ ((current_user.reports_count / 5 * 100)|int) if current_user.reports_count < 5 else 100 }}%">
                                     {{ current_user.reports_count }}/5 Reports
                                 </div>
                             </div>
@@ -193,8 +192,7 @@
                         <div class="col-md-4 mb-3">
                             <h6>Next Badge: Waste Warrior</h6>
                             <div class="progress" style="height: 25px;">
-                                {% set progress = (current_user.reports_count / 20 * 100) if current_user.reports_count < 20 else 100 %}
-                                <div class="progress-bar bg-info" role="progressbar" style="width: {{ progress }}%">
+                                <div class="progress-bar bg-info" role="progressbar" style="--progress-width: {{ ((current_user.reports_count / 20 * 100)|int) if current_user.reports_count < 20 else 100 }}%">
                                     {{ current_user.reports_count }}/20 Reports
                                 </div>
                             </div>
