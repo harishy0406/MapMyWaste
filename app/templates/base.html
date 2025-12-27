@@ -25,7 +25,8 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+                <ul class="navbar-nav ms-auto">
+                    {% if request.endpoint not in ['main.dashboard', 'main.profile', 'main.upload', 'main.my_reports', 'admin.dashboard'] %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.index') }}#features">Features</a>
                     </li>
@@ -38,8 +39,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.index') }}#contact">Contact</a>
                     </li>
-                </ul>
-                <ul class="navbar-nav ms-auto">
+                    {% endif %}
                     {% if current_user.is_authenticated %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -80,10 +80,11 @@
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            <div class="container-fluid mt-2 pt-2">
+            <div class="flash-messages-container position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 1050;">
                 <div class="container">
                     {% for category, message in messages %}
-                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show shadow" role="alert" data-bs-autohide="true" data-bs-delay="3000">
+                            <i class="bi bi-{{ 'exclamation-triangle-fill' if category == 'error' else 'check-circle-fill' if category == 'success' else 'info-circle-fill' }}"></i>
                             {{ message }}
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
@@ -99,31 +100,39 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-dark text-light py-4 mt-5">
+    <footer class="bg-dark text-light py-4 mt-4">
         <div class="container">
             <div class="row">
-                <div class="col-md-6">
-                    <h5>MapMyWaste</h5>
-                    <p class="text-muted">Capture waste, map locations, and optimize collection routes for a cleaner city.</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <h5>Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="{{ url_for('main.index') }}#contact" class="text-light text-decoration-none">Contact</a></li>
-                        <li><a href="#" class="text-light text-decoration-none">Privacy Policy</a></li>
-                        <li><a href="#" class="text-light text-decoration-none">Terms of Service</a></li>
-                        <li><a href="#" class="text-light text-decoration-none">GitHub</a></li>
-                    </ul>
-                    <div class="mt-3">
+                <div class="col-md-4 mb-3">
+                    <h6 class="fw-bold mb-3">MapMyWaste</h6>
+                    <p class="text-muted small mb-3">Capture waste, map locations, and optimize collection routes for a cleaner city.</p>
+                    <div>
                         <a href="#" class="text-light me-3"><i class="bi bi-facebook"></i></a>
                         <a href="#" class="text-light me-3"><i class="bi bi-twitter"></i></a>
-                        <a href="#" class="text-light me-3"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-light"><i class="bi bi-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h6 class="fw-bold mb-3">Quick Links</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="{{ url_for('main.index') }}#contact" class="text-light text-decoration-none">Contact</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Terms of Service</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h6 class="fw-bold mb-3">Contact Info</h6>
+                    <div class="small">
+                        <p class="mb-2"><i class="bi bi-envelope-fill me-2"></i>support@mapmywaste.com</p>
+                        <p class="mb-2"><i class="bi bi-telephone-fill me-2"></i>+91 98765 43210</p>
+                        <p class="mb-1"><i class="bi bi-geo-alt-fill me-2"></i>Chennai, Tamil Nadu, India</p>
                     </div>
                 </div>
             </div>
-            <hr class="bg-light">
-            <div class="text-center text-muted">
-                <p>&copy; <span id="current-year"></span> MapMyWaste. All rights reserved.</p>
+            <hr class="my-3 bg-light">
+            <div class="text-center text-muted small">
+                <p class="mb-0">&copy; <span id="current-year"></span> MapMyWaste. All rights reserved.</p>
             </div>
         </div>
     </footer>

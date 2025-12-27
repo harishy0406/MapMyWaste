@@ -16,10 +16,13 @@ def allowed_file(filename):
 
 @bp.route('/')
 def index():
-    # Redirect authenticated users to dashboard (optional - can be removed if you want landing page accessible)
-    # if current_user.is_authenticated:
-    #     return redirect(url_for('main.dashboard'))
-    
+    # Redirect authenticated users to appropriate dashboard
+    if current_user.is_authenticated:
+        if current_user.role == 'admin':
+            return redirect(url_for('admin.dashboard'))
+        else:
+            return redirect(url_for('main.dashboard'))
+
     # Get top users for leaderboard widget
     top_users = User.query.order_by(User.points.desc(), User.reports_count.desc()).limit(5).all()
     return render_template('main/index.html', top_users=top_users)
@@ -135,19 +138,20 @@ def contact():
     if request.method == 'POST':
         name = request.form.get('name', '').strip()
         email = request.form.get('email', '').strip().lower()
+        subject = request.form.get('subject', '').strip()
         message = request.form.get('message', '').strip()
-        
+
         if not name or not email or not message:
             flash('All fields are required.', 'error')
             return render_template('main/contact.html')
-        
-        contact_msg = ContactMessage(name=name, email=email, message=message)
+
+        contact_msg = ContactMessage(name=name, email=email, subject=subject, message=message)
         db.session.add(contact_msg)
         db.session.commit()
-        
+
         flash('Thank you for your message! We will get back to you soon.', 'success')
         return redirect(url_for('main.contact'))
-    
+
     return render_template('main/contact.html')
 
 @bp.route('/uploads/<filename>')
@@ -155,6 +159,12 @@ def uploaded_file(filename):
     """Serve uploaded images"""
     upload_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), Config.UPLOAD_FOLDER)
     return send_from_directory(upload_dir, filename)
+
+@bp.route('/images/<filename>')
+def images(filename):
+    """Serve static images like hero image"""
+    images_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'images')
+    return send_from_directory(images_dir, filename)
 
 @bp.route('/report/<int:report_id>/result')
 @login_required

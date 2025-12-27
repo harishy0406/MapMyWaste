@@ -7,13 +7,13 @@ document.addEventListener('DOMContentLoaded', function() {
         yearElement.textContent = new Date().getFullYear();
     }
     
-    // Auto-dismiss alerts after 5 seconds
+    // Auto-dismiss alerts after 3 seconds
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(alert => {
         setTimeout(() => {
             const bsAlert = new bootstrap.Alert(alert);
             bsAlert.close();
-        }, 5000);
+        }, 3000);
     });
     
     // Smooth scroll for anchor links
