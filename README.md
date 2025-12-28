@@ -126,7 +126,18 @@ Edit `config.py` to customize:
 - **Neighborhood Watcher**: Submit 5 reports
 - **Waste Warrior**: Submit 20 reports
 
+## API Endpoints
 
+- `GET /` - Landing page
+- `GET /auth/register` - Registration page
+- `GET /auth/login` - Login page
+- `POST /auth/logout` - Logout
+- `GET /upload` - Upload waste report (login required)
+- `GET /profile` - User profile (login required)
+- `GET /leaderboard` - Leaderboard
+- `GET /admin` - Admin dashboard (admin only)
+- `POST /admin/cluster` - Run clustering (admin only)
+- `GET /admin/map` - Admin map view (admin only)
 
 ## Development
 
