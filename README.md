@@ -1,6 +1,6 @@
 # MapMyWaste - Solid Waste Tracking & Route Optimization
 
-A Flask-based web application for tracking waste locations, clustering reports using K-means algorithm, and optimizing collection routes.
+A Flask-based web application for tracking waste locations, clustering reports using K-means algorithm, and optimizing collection routes for garbage trucks.
 ## Features
 
 - 📸 **Image Upload with GPS Extraction**: Automatically extract GPS coordinates from EXIF data or use browser geolocation
