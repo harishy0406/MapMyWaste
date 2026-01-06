@@ -26,7 +26,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    {% if request.endpoint not in ['main.dashboard', 'main.profile', 'main.upload', 'main.my_reports', 'admin.dashboard'] %}
+                    {% if request.endpoint not in ['main.dashboard', 'main.profile', 'main.upload', 'main.my_reports', 'admin.dashboard', 'admin.truck_assignments', 'admin.map'] %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.index') }}#features">Features</a>
                     </li>
