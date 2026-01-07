@@ -150,6 +150,16 @@ To reset the database, delete `mapmywaste.db` and run `python run.py` again.
 2. Add templates in `app/templates/`
 3. Update models if database changes needed
 4. Run migrations or recreate database
+## License
 
+This project is open source and available for educational purposes.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Support
+
+For issues or questions, please contact through the contact form on the website.
 
 
