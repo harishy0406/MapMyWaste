@@ -243,7 +243,7 @@ def seed_fleet_data():
 
         # Sample drivers
         drivers_data = [
-            {'name': 'Raj Kumar', 'license_number': 'TN123456789', 'phone': '+91 98765 43210', 'email': 'raj.driver@mapmywaste.com'},
+            {'name': 'Raj kumar', 'license_number': 'TN123456789', 'phone': '+91 98765 43210', 'email': 'raj.driver@mapmywaste.com'},
             {'name': 'Suresh Babu', 'license_number': 'TN987654321', 'phone': '+91 98765 43211', 'email': 'suresh.driver@mapmywaste.com'},
             {'name': 'Mohan Raj', 'license_number': 'TN456789123', 'phone': '+91 98765 43212', 'email': 'mohan.driver@mapmywaste.com'},
             {'name': 'Karthik Nair', 'license_number': 'TN789123456', 'phone': '+91 98765 43213', 'email': 'karthik.driver@mapmywaste.com'},
