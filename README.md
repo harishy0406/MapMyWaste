@@ -8,7 +8,7 @@ A Flask-based web application for tracking waste locations, clustering reports u
 - 🤖 **K-Means Clustering**: AI-powered clustering groups reports into optimal collection zones
 - 🎮 **Gamification**: Earn points, unlock badges, and compete on leaderboards
 - 👥 **User Management**: Registration, authentication, and user profiles
-- 🔐 **Admin Dashboar**: Manage reports, run clustering, and view analytics
+- 🔐 **Admin Dashboar**: Manage reports, run clustering, and view analytics 
 
 ## Tech Stack
 
