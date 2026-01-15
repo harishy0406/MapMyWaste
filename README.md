@@ -108,7 +108,7 @@ MapMyWaste/
 1. **Dashboard**: View statistics and recent reports
 2. **Run Clustering**: Group reports into clusters using K-means
 3. **View Map**: See all reports and centroids on an interactive map
-4. **Route Links**: Get Google Maps routes from depot to cluster centroids
+4. **Route Links**: Get Google Maps routes from depot to cluster centroids 
 
 ## Configuration
 
