@@ -49,7 +49,7 @@ python run.py
 ```
 This will create the database tables and an admin user:
 - Email: `admin@mapmywaste.com`
-- Password: `admin123`
+- Password: `admin123` 
 
 **⚠️ Important**: Change the admin password in production!
 
