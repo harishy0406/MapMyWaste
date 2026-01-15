@@ -123,7 +123,7 @@ Edit `config.py` to customize:
 
 - **Rookie Reporter**: Submit your first report
 - **Neighborhood Watcher**: Submit 5 reports
-- **Waste Warrior**: Submit 20 reports
+- **Waste Warrior**: Submit 20 reports 
 
 ## API Endpoints
 
