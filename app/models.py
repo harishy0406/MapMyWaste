@@ -149,4 +149,3 @@ class Assignment(db.Model):
 
     def __repr__(self):
         return f'<Assignment Truck:{self.truck_id} Route:{self.route_id} on {self.assignment_date}>'
-
