@@ -389,7 +389,7 @@ def truck_assignments():
     centroids = []
     if reports:
         cluster_groups = defaultdict(list)
-        for report in reports:
+        for report in reports: 
             if report.cluster_id is not None:
                 cluster_groups[report.cluster_id].append(report)
 
