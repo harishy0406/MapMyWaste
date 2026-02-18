@@ -413,7 +413,6 @@ def truck_assignments():
                          depot_lat=Config.DEPOT_LAT,
                          depot_lon=Config.DEPOT_LON)
 
-
 @bp.route('/api/reports')
 @login_required
 @admin_required
