@@ -31,14 +31,27 @@ def dashboard():
     reports_with_clusters = WasteReport.query.filter(WasteReport.cluster_id.isnot(None)).all()
     cluster_count = len(set(r.cluster_id for r in reports_with_clusters if r.cluster_id is not None))
 
-    # Recent reports
-    recent_reports = WasteReport.query.order_by(WasteReport.created_at.desc()).limit(10).all()
+    # Check if sorting by score
+    sort_by = request.args.get('sort', 'recent')
+    is_sorted_by_score = False
+    
+    if sort_by == 'score':
+        # Sort by waste_score (highest first), then by date
+        recent_reports = WasteReport.query.order_by(
+            WasteReport.waste_score.desc(),
+            WasteReport.created_at.desc()
+        ).limit(10).all()
+        is_sorted_by_score = True
+    else:
+        # Default: sort by date (most recent first)
+        recent_reports = WasteReport.query.order_by(WasteReport.created_at.desc()).limit(10).all()
 
     return render_template('admin/dashboard.html',
                          total_reports=total_reports,
                          total_users=total_users,
                          cluster_count=cluster_count,
-                         recent_reports=recent_reports)
+                         recent_reports=recent_reports,
+                         is_sorted_by_score=is_sorted_by_score)
 
 @bp.route('/cluster', methods=['POST'])
 @login_required
@@ -67,10 +80,20 @@ def cluster():
 @login_required
 @admin_required
 def map():
-    # Get all reports with coordinates
+    # Restrict map to Chennai area
+    CHENNAI_MIN_LAT = 12.8
+    CHENNAI_MAX_LAT = 13.4
+    CHENNAI_MIN_LON = 80.0
+    CHENNAI_MAX_LON = 80.6
+
+    # Get all reports within Chennai bounds
     reports = WasteReport.query.filter(
         WasteReport.latitude.isnot(None),
-        WasteReport.longitude.isnot(None)
+        WasteReport.longitude.isnot(None),
+        WasteReport.latitude >= CHENNAI_MIN_LAT,
+        WasteReport.latitude <= CHENNAI_MAX_LAT,
+        WasteReport.longitude >= CHENNAI_MIN_LON,
+        WasteReport.longitude <= CHENNAI_MAX_LON
     ).all()
     
     # Calculate centroids
@@ -379,10 +402,19 @@ def truck_assignments():
     today = date.today()
     today_assignments = Assignment.query.filter_by(assignment_date=today).all()
 
-    # Get all waste reports for the map
+    # Restrict reports shown on the admin assignment map to Chennai only
+    CHENNAI_MIN_LAT = 12.8
+    CHENNAI_MAX_LAT = 13.4
+    CHENNAI_MIN_LON = 80.0
+    CHENNAI_MAX_LON = 80.6
+
     reports = WasteReport.query.filter(
         WasteReport.latitude.isnot(None),
-        WasteReport.longitude.isnot(None)
+        WasteReport.longitude.isnot(None),
+        WasteReport.latitude >= CHENNAI_MIN_LAT,
+        WasteReport.latitude <= CHENNAI_MAX_LAT,
+        WasteReport.longitude >= CHENNAI_MIN_LON,
+        WasteReport.longitude <= CHENNAI_MAX_LON
     ).all()
 
     # Calculate centroids for clusters
@@ -413,6 +445,98 @@ def truck_assignments():
                          depot_lat=Config.DEPOT_LAT,
                          depot_lon=Config.DEPOT_LON)
 
+
+@bp.route('/manage-trucks', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def manage_trucks():
+    if request.method == 'POST':
+        truck_number = request.form.get('truck_number')
+        capacity = request.form.get('capacity', type=float)
+        truck_type = request.form.get('truck_type')
+        driver_id = request.form.get('driver_id', type=int)
+        if truck_number:
+            truck = Truck(truck_number=truck_number, capacity=capacity or 0.0, truck_type=truck_type or '', driver_id=driver_id)
+            db.session.add(truck)
+            db.session.commit()
+            flash('Truck created.', 'success')
+        return redirect(url_for('admin.manage_trucks'))
+
+    trucks = Truck.query.all()
+    drivers = Driver.query.all()
+    return render_template('admin/manage_trucks.html', trucks=trucks, drivers=drivers)
+
+
+@bp.route('/manage-drivers', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def manage_drivers():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        license_number = request.form.get('license_number')
+        phone = request.form.get('phone')
+        email = request.form.get('email')
+        if name:
+            driver = Driver(name=name, license_number=license_number or '', phone=phone or '', email=email or '')
+            db.session.add(driver)
+            db.session.commit()
+            flash('Driver added.', 'success')
+        return redirect(url_for('admin.manage_drivers'))
+
+    drivers = Driver.query.all()
+    return render_template('admin/manage_drivers.html', drivers=drivers)
+
+
+@bp.route('/manage-routes', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def manage_routes():
+    if request.method == 'POST':
+        route_name = request.form.get('route_name')
+        description = request.form.get('description')
+        distance_km = request.form.get('distance_km', type=float)
+        est_duration = request.form.get('estimated_duration', type=int)
+        stops = request.form.get('stops')
+        if route_name:
+            route = Route(route_name=route_name, description=description or '', distance_km=distance_km or 0.0, estimated_duration=est_duration or 0, stops=stops or '[]')
+            db.session.add(route)
+            db.session.commit()
+            flash('Route created.', 'success')
+        return redirect(url_for('admin.manage_routes'))
+
+    routes = Route.query.all()
+    return render_template('admin/manage_routes.html', routes=routes)
+
+
+@bp.route('/optimize-routes', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def optimize_routes():
+    if request.method == 'POST':
+        k = request.form.get('k', type=int) or 5
+        result = run_clustering(k=k)
+        if result.get('success'):
+            flash('Route optimization completed (clustering).', 'success')
+        else:
+            flash('Route optimization failed: ' + result.get('message', 'unknown'), 'error')
+        return redirect(url_for('admin.optimize_routes'))
+
+    # show a simple map limited to Chennai
+    CHENNAI_MIN_LAT = 12.8
+    CHENNAI_MAX_LAT = 13.4
+    CHENNAI_MIN_LON = 80.0
+    CHENNAI_MAX_LON = 80.6
+    reports = WasteReport.query.filter(
+        WasteReport.latitude.isnot(None),
+        WasteReport.longitude.isnot(None),
+        WasteReport.latitude >= CHENNAI_MIN_LAT,
+        WasteReport.latitude <= CHENNAI_MAX_LAT,
+        WasteReport.longitude >= CHENNAI_MIN_LON,
+        WasteReport.longitude <= CHENNAI_MAX_LON
+    ).all()
+
+    return render_template('admin/optimize_routes.html', reports=reports, depot_lat=Config.DEPOT_LAT, depot_lon=Config.DEPOT_LON)
+
 @bp.route('/api/reports')
 @login_required
 @admin_required
@@ -433,6 +557,8 @@ def api_reports():
             'description': report.description or '',
             'image_filename': report.image_filename,
             'user_name': report.user.name,
+            'waste_score': float(report.waste_score) if report.waste_score is not None else None,
+            'is_spam': bool(report.is_spam),
             'created_at': report.created_at.isoformat()
         })
 

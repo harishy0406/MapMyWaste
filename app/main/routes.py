@@ -5,6 +5,7 @@ from app.main import bp
 from app.models import User, WasteReport, ContactMessage
 from app import db
 from app.services.exif_utils import extract_gps_from_image
+from app.services.detector import predict, image_md5
 from app.services.gamification import update_user_achievements
 from config import Config
 import os
@@ -67,16 +68,48 @@ def upload():
             longitude = lon_exif
             location_source = 'EXIF'
         elif latitude is None or longitude is None:
-            flash('Location is required. Please enable location access or enter coordinates manually.', 'error')
-            os.remove(upload_path)  # Clean up uploaded file
-            return redirect(url_for('main.upload'))
+            # Default to Chennai depot coords when no coordinates provided
+            latitude = Config.DEPOT_LAT
+            longitude = Config.DEPOT_LON
+            location_source = 'DEFAULT_CHENNAI'
         else:
             location_source = 'BROWSER'
         
+        # Compute image hash and run detector
+        image_path = upload_path
+        img_hash = image_md5(image_path)
+        score = predict(image_path)
+        
+        # Extract original filename for duplicate checking
+        original_filename = secure_filename(file.filename)
+
+        # Check duplicate by hash
+        existing_by_hash = WasteReport.query.filter_by(image_hash=img_hash).first()
+        
+        # Check duplicate by original filename
+        existing_by_filename = WasteReport.query.filter(
+            WasteReport.image_filename.like(f"%{original_filename}%")
+        ).first()
+        
+        is_spam = False
+        is_filename_duplicate = False
+        
+        if existing_by_hash:
+            is_spam = True
+            flash('Duplicate image detected (same content). This has been reported to admins as spam.', 'error')
+        
+        if existing_by_filename:
+            is_spam = True
+            is_filename_duplicate = True
+            flash('Duplicate filename detected. This has been reported to admins as spam.', 'warning')
+
         # Create waste report
         report = WasteReport(
             user_id=current_user.id,
             image_filename=filename,
+            image_hash=img_hash,
+            waste_score=score,
+            is_spam=is_spam,
             description=description,
             latitude=latitude,
             longitude=longitude,
@@ -99,6 +132,9 @@ def upload():
         # Store newly earned badges in session for result page
         from flask import session
         session['newly_earned_badges'] = newly_earned
+        session['is_duplicate'] = is_filename_duplicate or bool(existing_by_hash)
+        session['duplicate_type'] = 'filename' if is_filename_duplicate else ('hash' if existing_by_hash else None)
+
         
         # Redirect to result page with report ID
         return redirect(url_for('main.report_result', report_id=report.id))
@@ -197,8 +233,12 @@ def report_result(report_id):
     # Get newly earned badges from session
     from flask import session
     newly_earned_badges = session.pop('newly_earned_badges', [])
+    is_duplicate = session.pop('is_duplicate', False)
+    duplicate_type = session.pop('duplicate_type', None)
     
     return render_template('main/report_result.html', 
                          report=report, 
                          sample_address=sample_address,
-                         badges=newly_earned_badges)
+                         badges=newly_earned_badges,
+                         is_duplicate=is_duplicate,
+                         duplicate_type=duplicate_type)
