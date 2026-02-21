@@ -73,6 +73,9 @@
                         <a href="{{ url_for('admin.truck_assignments') }}" class="btn btn-info">
                             <i class="bi bi-truck"></i> Truck Assignments
                         </a>
+                        <a href="{{ url_for('admin.dashboard', sort='score') }}" class="btn btn-success" {% if is_sorted_by_score %}style="font-weight: bold; box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);"{% endif %}>
+                            <i class="bi bi-sort-down"></i> Prioritize by Score
+                        </a>
                         <form method="POST" action="{{ url_for('admin.seed_data') }}" class="d-inline" onsubmit="return confirm('This will create sample data. Continue?');">
                             <button type="submit" class="btn btn-warning">
                                 <i class="bi bi-database-add"></i> Generate Sample Data
@@ -96,8 +99,20 @@
     
     <!-- Recent Reports -->
     <div class="card border-0 shadow-sm">
-        <div class="card-header bg-dark text-white">
-            <h5 class="mb-0">Recent Reports</h5>
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="mb-0">Recent Reports</h5>
+                {% if is_sorted_by_score %}
+                <small style="opacity: 0.8;">Sorted by waste score (highest priority first)</small>
+                {% else %}
+                <small style="opacity: 0.8;">Sorted by date (most recent first)</small>
+                {% endif %}
+            </div>
+            {% if is_sorted_by_score %}
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-sm btn-light">
+                <i class="bi bi-arrow-counterclockwise"></i> Reset Sort
+            </a>
+            {% endif %}
         </div>
         <div class="card-body">
             {% if recent_reports %}
@@ -108,6 +123,8 @@
                             <th>Image</th>
                             <th>User</th>
                             <th>Coordinates</th>
+                            <th>Waste Score</th>
+                            <th>Spam</th>
                             <th>Cluster</th>
                             <th>Date</th>
                         </tr>
@@ -122,6 +139,18 @@
                             <td>{{ report.user.name }}</td>
                             <td>
                                 <small>{{ report.latitude|round(6) }}, {{ report.longitude|round(6) }}</small>
+                            </td>
+                            <td>
+                                {% if report.waste_score is not none %}
+                                    <strong>{{ (report.waste_score)|round(1) }}%</strong>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if report.is_spam %}
+                                    <span class="badge bg-danger">Yes</span>
+                                {% endif %}
                             </td>
                             <td>
                                 {% if report.cluster_id is not none %}
