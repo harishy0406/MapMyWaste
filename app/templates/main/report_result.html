@@ -222,6 +222,22 @@
                                     <td><strong><i class="bi bi-file-text"></i> Description:</strong></td>
                                     <td>{{ report.description or 'No description provided' }}</td>
                                 </tr>
+                                <tr>
+                                    <td><strong><i class="bi bi-speedometer2"></i> Waste Score:</strong></td>
+                                    <td>
+                                        {% if report.waste_score is not none %}
+                                            <span class="badge bg-primary">{{ (report.waste_score)|round(1) }}%</span>
+                                        {% else %}
+                                            <span class="text-muted">N/A</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% if report.is_spam %}
+                                <tr>
+                                    <td><strong><i class="bi bi-exclamation-circle"></i> Spam:</strong></td>
+                                    <td><span class="badge bg-danger">Marked as Duplicate/Spam</span></td>
+                                </tr>
+                                {% endif %}
                             </table>
                         </div>
                     </div>
@@ -309,6 +325,14 @@
     <!-- Final Acknowledgement -->
     <div class="row mt-5">
         <div class="col-12">
+            {% if is_duplicate %}
+            <div class="alert alert-warning border-0 shadow-sm text-center mb-3" role="alert" style="background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);">
+                <h5 class="alert-heading mb-2">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Duplicate Report Detected
+                </h5>
+                <p class="mb-0">This report has been identified as a duplicate and marked as spam. It has been reported to administrators for review.</p>
+            </div>
+            {% endif %}
             <div class="alert alert-primary border-0 shadow-sm text-center" role="alert" style="background: linear-gradient(135deg, #e7f1ff 0%, #cfe2ff 100%);">
                 <h5 class="alert-heading mb-3">
                     <i class="bi bi-check-circle-fill text-success"></i> Report Successfully Acknowledged
@@ -325,6 +349,19 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script>
+    // Show duplicate alert if detected
+    {% if is_duplicate %}
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if duplicate_type == 'filename' %}
+        alert('⚠️ DUPLICATE DETECTED!\n\nThis filename has been uploaded before. Your report has been marked as spam and reported to admins.');
+        {% elif duplicate_type == 'hash' %}
+        alert('⚠️ DUPLICATE DETECTED!\n\nThis image has been uploaded before (duplicate content). Your report has been marked as spam and reported to admins.');
+        {% else %}
+        alert('⚠️ DUPLICATE DETECTED!\n\nYour report has been marked as spam and reported to admins.');
+        {% endif %}
+    });
+    {% endif %}
+
     // Initialize map
     const map = L.map('result-map').setView([{{ report.latitude }}, {{ report.longitude }}], 15);
     

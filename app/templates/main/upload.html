@@ -84,6 +84,8 @@
     const mapPreviewContainer = document.getElementById('map-preview-container');
     let map = null;
     let marker = null;
+    const imageInput = document.getElementById('image');
+    const CHENNAI_CENTER = { lat: 13.0827, lon: 80.2707 };
 
     getLocationBtn.addEventListener('click', () => {
         locationStatus.textContent = 'Getting your location...';
@@ -142,6 +144,17 @@
             updateMapPreview(parseFloat(latInput.value), parseFloat(lonInput.value));
         }
     });
+
+    // Auto-fill Chennai coordinates when user selects an image (enforce Chennai-only uploads)
+    if (imageInput) {
+        imageInput.addEventListener('change', () => {
+            latInput.value = CHENNAI_CENTER.lat;
+            lonInput.value = CHENNAI_CENTER.lon;
+            locationInputs.classList.remove('d-none');
+            locationStatus.textContent = `Location set to Chennai: ${CHENNAI_CENTER.lat.toFixed(6)}, ${CHENNAI_CENTER.lon.toFixed(6)}`;
+            updateMapPreview(CHENNAI_CENTER.lat, CHENNAI_CENTER.lon);
+        });
+    }
 </script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />

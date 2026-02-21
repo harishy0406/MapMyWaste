@@ -50,11 +50,14 @@ class WasteReport(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     image_filename = db.Column(db.String(255), nullable=False)
+    image_hash = db.Column(db.String(64), nullable=True, index=True)
     description = db.Column(db.Text)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     location_source = db.Column(db.String(20), nullable=False)  # EXIF, BROWSER, MANUAL
     address = db.Column(db.String(255))
+    waste_score = db.Column(db.Float, nullable=True)
+    is_spam = db.Column(db.Boolean, default=False, nullable=False)
     cluster_id = db.Column(db.Integer, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     
