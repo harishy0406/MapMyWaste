@@ -12,6 +12,7 @@ with app.app_context():
     db.create_all()
     
     # Verify columns
+    
     from sqlalchemy import inspect
     insp = inspect(db.engine)
     cols = {c['name'] for c in insp.get_columns('waste_report')}
