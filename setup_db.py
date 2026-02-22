@@ -11,7 +11,7 @@ from app.models import User, WasteReport, ContactMessage, Driver, Truck, Route, 
 # Create app
 app = create_app()
 
-# Enable SQL echo to see what's happening
+# Enable SQL echo to see what's happening 
 app.config['SQLALCHEMY_ECHO'] = True
 
 with app.app_context():
