@@ -10,6 +10,7 @@ app = create_app()
 
 with app.app_context():
     # Create all tables
+    
     db.create_all()
     
     # Now check columns via SQLAlchemy
