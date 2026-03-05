@@ -16,7 +16,7 @@ with app.app_context():
     # Now check columns via SQLAlchemy
     from sqlalchemy import inspect
     insp = inspect(db.engine)
-    cols = insp.get_columns('waste_report')
+    cols = insp.get_columns('waste_report') 
     print('Columns in waste_report:')
     for c in cols:
         print(f"  - {c['name']:20} {c['type']}")
