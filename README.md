@@ -12,7 +12,7 @@ A Flask-based web application for tracking waste locations, clustering reports u
 
 ## Tech Stack
 
-- **Backend**: Python Flask
+- **Backend**: Python Flask 
 - **Database**: SQLite with SQLAlchemy ORM
 - **Frontend**: HTML/CSS/JavaScript with Bootstrap 5
 - **Maps**: Leaflet.js with OpenStreetMap
