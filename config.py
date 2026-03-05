@@ -10,7 +10,7 @@ class Config:
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
     
     # Clustering settings
-    DEFAULT_CLUSTERS = 5
+    DEFAULT_CLUSTERS = 5 
     MIN_REPORTS_PER_CLUSTER = 10
     
     # Gamification settings
