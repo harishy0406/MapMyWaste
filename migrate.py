@@ -12,7 +12,7 @@ from app.models import WasteReport
 
 app = create_app()
 with app.app_context():
-    # SQLAlchemy will create all tables if they don't exist
+    # SQLAlchemy will create all tables if they don't exist 
     db.create_all()
     
     # Now add the columns if they don't already exist (for existing databases)
