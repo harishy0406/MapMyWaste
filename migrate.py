@@ -37,7 +37,7 @@ with app.app_context():
         
         con.commit()
         con.close()
-        
+
         if changes:
             print(f"✓ Migration successful! Added columns: {changes}")
         else:
