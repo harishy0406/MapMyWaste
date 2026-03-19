@@ -12,4 +12,4 @@ for col in WasteReport.__table__.columns:
 
 # Show the expected columns
 print("\nExpected columns from class definition:")
-print("  image_hash, waste_score, is_spam")
+print("  image_hash, waste_score, is_spam") 
