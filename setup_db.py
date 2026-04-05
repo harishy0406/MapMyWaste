@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python 
 """Direct database verification and creation"""
 import os
 import sys
