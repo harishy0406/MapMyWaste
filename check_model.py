@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 # Direct model import
 from app.models import WasteReport
 
-# Check the model definition itself
+# Check the model definition itself 
 print("WasteReport table columns (from model __table__):")
 for col in WasteReport.__table__.columns:
     print(f"  {col.name}")
