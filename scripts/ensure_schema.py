@@ -1,5 +1,5 @@
 import sqlite3, os
-
+ 
 DB='mapmywaste.db'
 if not os.path.exists(DB):
     print('DB not found, nothing to migrate:', DB)
