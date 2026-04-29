@@ -93,6 +93,7 @@ MapMyWaste/
 ├── run.py                   # Application entry point
 └── requirements.txt         # Python dependencies
 ```
+## Images: 
 
 ## Usage
 
