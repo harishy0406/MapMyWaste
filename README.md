@@ -60,7 +60,7 @@ python run.py
 
 The app will be available at `http://localhost:5000`
 
-## Project Structure
+## Project Structure:
 
 ```
 MapMyWaste/
