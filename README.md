@@ -106,6 +106,7 @@ MapMyWaste/
 
 ### For Administrators
 
+
 1. **Dashboard**: View statistics and recent reports
 2. **Run Clustering**: Group reports into clusters using K-means
 3. **View Map**: See all reports and centroids on an interactive map
