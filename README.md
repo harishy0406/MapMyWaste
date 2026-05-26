@@ -1,10 +1,26 @@
-# MapMyWaste
+# ♻️MapMyWaste: Crowdsourced Waste Tracking & Route Optimization
+>**Transforming citizen waste reports into AI-optimized collection routes for cleaner, smarter cities.**
 
-**MapMyWaste** is a Flask-based smart waste reporting and route optimization platform for community-driven cleanliness operations. It helps citizens report garbage hotspots with images and location data, while giving administrators tools to cluster reports, visualize problem zones, and plan efficient collection routes. ♻️
+[![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green?logo=fastapi)](https://fastapi.tiangolo.com)
+[![OpenCV](https://img.shields.io/badge/OpenCV-ComputerVision-red?logo=opencv)](https://opencv.org)
+[![Machine Learning](https://img.shields.io/badge/AI-MachineLearning-orange)]()
+[![Flask](https://img.shields.io/badge/Flask-WebFramework-yellow?logo=flask)](https://flask.palletsprojects.com)
+[![SQLite](https://img.shields.io/badge/SQLite-Database-blue?logo=sqlite)](https://sqlite.org)
+[![Waste Management](https://img.shields.io/badge/Domain-WasteManagement-brightgreen)]()
+[![OpenStreetMap](https://img.shields.io/badge/OpenStreetMap-Maps-brightgreen?logo=openstreetmap)](https://openstreetmap.org)
 
-![MapMyWaste Hero](images/hero.jpg)
 
-## Overview
+**MapMyWaste** is a Flask-based smart waste reporting and route optimization platform for community-driven cleanliness operations. It helps citizens report garbage hotspots with images and location data, while giving administrators tools to cluster reports, visualize problem zones, and plan efficient collection routes. 
+
+<p align="center">
+  <img width="148" height="238" alt="image" src="https://github.com/user-attachments/assets/54202efb-16dd-4524-a898-dee6e84841e9" />
+  <img width="350" height="238" alt="image" src="https://github.com/user-attachments/assets/11129064-e697-411a-b154-d3638c6e4fe2" />
+</p>
+
+
+
+## 🎯 Overview
 
 MapMyWaste connects public waste reporting with municipal-style operations. Users can upload images, attach GPS coordinates, earn points, and track their impact. Admins can monitor incoming reports, identify duplicate or spam submissions, cluster nearby reports, and manage fleet resources such as trucks, drivers, routes, and assignments.
 
@@ -21,7 +37,7 @@ The project is designed as a practical hackathon-ready prototype with a clear Fl
 - 📊 Admin dashboard for reports, users, clusters, spam signals, and operational insights
 - 🖼️ Image upload handling with validation and secure filenames
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 | Layer | Technology |
 | --- | --- |
@@ -33,50 +49,36 @@ The project is designed as a practical hackathon-ready prototype with a clear Fl
 | ML / Clustering | scikit-learn KMeans, NumPy |
 | Image Processing | Pillow, EXIF extraction, MD5 hashing |
 
-## Architecture
+## 📸 Screenshots
+
+- Dashboard overview
+<img width="1377" height="700" alt="image" src="https://github.com/user-attachments/assets/8ee3294b-4615-45c2-87d9-105fd920e328" />
+
+- Waste upload flow
+<img width="1377" height="400" alt="image" src="https://github.com/user-attachments/assets/62dd6c95-1b06-43ad-ac30-e5376253c43f" />
+<img width="1377" height="700" alt="image" src="https://github.com/user-attachments/assets/fe3a7410-fda8-4999-b112-5c7159889384" />
+
+- Admin Dashboard, Cluster map, Fleet assignment
+<img width="1377" height="700" alt="image" src="https://github.com/user-attachments/assets/7781b910-6611-4a4f-895e-4b5ca790a15a" />
+
+
+## 🏆 Hackathon Recognition
+
+MapMyWaste won **First Prize at a National Hackathon in Chennai**. 🏅
+<p align="center">
+<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/13924f95-3669-4ecb-9b9a-5786973ea8af" />
+</p>
+This project demonstrates an applied civic-tech idea that combines reporting, geospatial visualization, clustering, and operations planning into one usable prototype.
+
+
+
+## 🏗️ Architecture
 
 MapMyWaste follows a modular Flask architecture with blueprints for public pages, authentication, and admin operations.
+<p align="center">
+<img width="350" height="400" alt="image" src="https://github.com/user-attachments/assets/a3b011ab-ed3f-4e99-89dc-28cff58cd07d" />
+</p>
 
-![Architecture Diagram](images/Architecture.png)
-
-```text
-User / Admin Browser
-        |
-        v
-Flask Application Factory
-        |
-        +-- auth blueprint
-        |   +-- registration
-        |   +-- login / logout
-        |
-        +-- main blueprint
-        |   +-- landing page
-        |   +-- waste report upload
-        |   +-- dashboard / profile
-        |   +-- leaderboard
-        |   +-- contact form
-        |
-        +-- admin blueprint
-            +-- report dashboard
-            +-- map and clustering
-            +-- route optimization
-            +-- truck / driver / route management
-            +-- fleet assignments
-
-Services Layer
-        |
-        +-- EXIF GPS extraction
-        +-- waste scoring / image hash detection
-        +-- K-means clustering
-        +-- gamification rules
-        +-- sample data generation
-
-Data Layer
-        |
-        +-- SQLite database
-        +-- SQLAlchemy models
-        +-- uploaded images
-```
 
 ### Core Data Flow
 
@@ -87,7 +89,7 @@ Data Layer
 5. The user receives points and may unlock badges.
 6. Admins review reports, run clustering, view map centroids, and plan collection routes.
 
-## Project Structure
+## 📂 Project Structure
 
 ```text
 MapMyWaste/
@@ -129,7 +131,7 @@ MapMyWaste/
 └── README.md
 ```
 
-## Getting Started
+## ⚡Getting Started
 
 ### Prerequisites
 
@@ -142,7 +144,7 @@ MapMyWaste/
 1. Clone the repository and enter the project folder.
 
    ```bash
-   git clone <your-repository-url>
+   git clone https://github.com/harishy0406/MapMyWaste
    cd MapMyWaste
    ```
 
@@ -178,7 +180,7 @@ MapMyWaste/
    http://localhost:5000
    ```
 
-## Default Admin Login
+### Default Admin Login
 
 When `run.py` starts, it creates a development admin account if one does not already exist.
 
@@ -189,9 +191,9 @@ Password: admin123
 
 Change these credentials before using the project outside local development.
 
-## Usage
+### Usage
 
-### Citizen Workflow
+#### Citizen Workflow
 
 - Create an account or sign in
 - Upload a waste image
@@ -200,7 +202,7 @@ Change these credentials before using the project outside local development.
 - Earn points and badges for consistent reporting
 - Track personal activity from the dashboard and profile pages
 
-### Admin Workflow
+#### Admin Workflow
 
 - Sign in with an admin account
 - Review total users, reports, recent activity, and cluster counts
@@ -210,7 +212,7 @@ Change these credentials before using the project outside local development.
 - Manage trucks, drivers, routes, and daily assignments
 - Seed sample data for demos and testing
 
-## Key Pages and Endpoints
+## 📍 Key Pages and Endpoints
 
 | Endpoint | Method | Description |
 | --- | --- | --- |
@@ -235,7 +237,7 @@ Change these credentials before using the project outside local development.
 | `/admin/manage-drivers` | GET, POST | Driver management |
 | `/admin/manage-routes` | GET, POST | Route management |
 
-## Data Models
+## 📊 Data Models
 
 | Model | Purpose |
 | --- | --- |
@@ -247,7 +249,7 @@ Change these credentials before using the project outside local development.
 | `Route` | Collection route metadata and stop coordinates |
 | `Assignment` | Scheduled truck, driver, and route pairings |
 
-## Configuration
+## ⚙️ Configuration
 
 Most runtime settings live in `config.py`.
 
@@ -265,63 +267,15 @@ Most runtime settings live in `config.py`.
 
 For production, prefer environment variables for sensitive values such as `SECRET_KEY` and `DATABASE_URL`.
 
-## Screenshots
-
-Add or replace screenshots in the `images/` folder as the UI evolves.
-
-![Application Screenshot](images/ss.png)
-
-Suggested showcase set:
-
-- Dashboard overview
-- Waste upload flow
-- Admin cluster map
-- Fleet assignment view
-- Leaderboard and badges
-
-## Hackathon Recognition
-
-MapMyWaste won **First Prize at a National Hackathon in Chennai**. 🏅
-
-This project demonstrates an applied civic-tech idea that combines reporting, geospatial visualization, clustering, and operations planning into one usable prototype.
-
-## Development Notes
-
-- The app uses the Flask application factory pattern in `app/__init__.py`.
-- Blueprints keep user, auth, and admin routes separated.
-- Database tables are created automatically when `python run.py` starts.
-- Uploaded files are stored under `uploads/`.
-- Local database files are stored under Flask's instance path when using the default SQLite URI.
-- Helper scripts in `scripts/` and `testing_files/` can be used for schema checks, rebuilds, and integration testing.
-
-## Testing and Utilities
-
-Run the available utility scripts as needed:
-
-```bash
-python scripts/check_db.py
-python scripts/ensure_schema.py
-python testing_files/test_integration.py
-```
-
-## Roadmap Ideas
-
-- Real-time admin notifications for new high-priority reports
-- Better route optimization using distance matrices or OR-Tools
-- Role-based dashboards for drivers and field workers
-- Report verification workflow with status updates
-- Cloud storage for uploaded images
-- Production-ready database migrations
-- Public analytics page for community impact
-
-## Contributing
+## 🤝 Contributing
 
 Contributions are welcome. Please keep changes focused, test user-facing flows, and document any configuration or database changes.
 
-## License
+---
+<div align="center">
 
-This project is open source and intended for educational, hackathon, and demonstration use.
+**Made with ❤️ by M Harish Gautham**
 
-## Support
+⭐ If you find this project helpful, please star it! ⭐
 
-For questions, ideas, or issues, use the contact form inside the application or open an issue in the repository.
+</div>
