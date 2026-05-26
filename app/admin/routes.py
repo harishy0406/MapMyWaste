@@ -51,7 +51,7 @@ def dashboard():
                          total_users=total_users,
                          cluster_count=cluster_count,
                          recent_reports=recent_reports,
-                         is_sorted_by_score=is_sorted_by_score)
+                         is_sorted_by_score=is_sorted_by_score) 
 
 @bp.route('/cluster', methods=['POST'])
 @login_required
