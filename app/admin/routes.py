@@ -8,14 +8,7 @@ from app.services.clustering import run_clustering
 from config import Config
 from collections import defaultdict
 
-def admin_required(f):
-    """Decorator to require admin role"""
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated or current_user.role != 'admin':
-            abort(403)
-        return f(*args, **kwargs)
-    return decorated_function
+
 
 @bp.route('/')
 @login_required
