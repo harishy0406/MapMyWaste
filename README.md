@@ -19,6 +19,13 @@
 </p>
 
 
+## 🏆 Hackathon Recognition
+
+MapMyWaste won **First Prize at a National Hackathon in Chennai**. 🏅
+<p align="center">
+<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/13924f95-3669-4ecb-9b9a-5786973ea8af" />
+</p>
+This project demonstrates an applied civic-tech idea that combines reporting, geospatial visualization, clustering, and operations planning into one usable prototype.
 
 ## 🎯 Overview
 
@@ -60,15 +67,6 @@ The project is designed as a practical hackathon-ready prototype with a clear Fl
 
 - Admin Dashboard, Cluster map, Fleet assignment
 <img width="1377" height="700" alt="image" src="https://github.com/user-attachments/assets/7781b910-6611-4a4f-895e-4b5ca790a15a" />
-
-
-## 🏆 Hackathon Recognition
-
-MapMyWaste won **First Prize at a National Hackathon in Chennai**. 🏅
-<p align="center">
-<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/13924f95-3669-4ecb-9b9a-5786973ea8af" />
-</p>
-This project demonstrates an applied civic-tech idea that combines reporting, geospatial visualization, clustering, and operations planning into one usable prototype.
 
 
 
